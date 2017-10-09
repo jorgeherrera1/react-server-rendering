@@ -1,0 +1,24 @@
+{
+  "name": "sd",
+  "version": "0.0.1",
+  "description": "Service Delivery",
+  "main": "index.js",
+  "author": "Jorge Herrera <jorge.herrera.cabrera@gmail.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "NODE_ENV=development webpack & NODE_ENV=development node server.js",
+    "build": "NODE_ENV=development webpack"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-react-app": "^3.0.3",
+    "webpack": "^3.6.0"
+  },
+  "dependencies": {
+    "express": "^4.16.1",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  }
+}
