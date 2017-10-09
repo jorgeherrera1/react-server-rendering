@@ -1,11 +1,15 @@
 import React from 'react';
+import {Switch, Route} from 'react-router-dom';
+import routes from './routes';
+
 
 const App = () => (
   <main>
-    <h1>The App</h1>
-    <p>
-      this is a very nice app
-    </p>
+    <Switch>
+      {routes.map((route, i) => (
+        <Route key={i} {...route} />
+      ))}
+    </Switch>
   </main>
 );
 

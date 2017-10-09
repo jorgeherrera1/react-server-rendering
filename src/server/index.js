@@ -1,6 +1,7 @@
 import Express from 'express';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
+import {StaticRouter} from 'react-router-dom';
 import App from '../common/app';
 
 const app = new Express();
@@ -9,7 +10,11 @@ const port = process.env.PORT || 9000;
 app.use(Express.static('public'));
 
 const handleRender = (req, res) => {
-  const html = renderToString(<App />);
+  const html = renderToString(
+    <StaticRouter location={req.url}>
+      <App />
+    </StaticRouter>
+  );
 
   res.send(renderFullPage(html));
 };
