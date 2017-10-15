@@ -7,8 +7,10 @@ class Dashboard extends Component {
 
     let initialData;
     if (props.staticContext) {
+      console.log('constructing from server');
       initialData = props.staticContext.initialData;
     } else {
+      console.log('constructing from browser');
       initialData = window.__INITIAL_DATA__;
       delete window.__INITIAL_DATA__;
     }

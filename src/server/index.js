@@ -49,8 +49,8 @@ const renderFullPage = (html, initialData) => {
     </head>
     <body>
       <div id="app">${html}</div>
-      <script src="/app.bundle.js"></script>
       <script>window.__INITIAL_DATA__ = ${JSON.stringify(initialData)};</script>
+      <script src="/app.bundle.js"></script>
     </body>
   </html>
   `
