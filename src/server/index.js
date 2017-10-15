@@ -20,6 +20,12 @@ app.get('/api/dashboard', (req, res) => {
   })
 });
 
+app.get('/api/skills', (req, res) => {
+  res.json({
+    skills: ['Oracle PLSQL', 'JavaScript']
+  });
+});
+
 const handleRender = (req, res) => {
   console.log(`Request URL is: ${req.url}`);
   const currentRoute = routes.find((route) => (matchPath(req.url, route)));
