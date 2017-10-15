@@ -29,7 +29,8 @@ app.get('/api/skills', (req, res) => {
 const handleRender = (req, res) => {
   console.log(`Request URL is: ${req.url}`);
   const currentRoute = routes.find((route) => (matchPath(req.url, route)));
-  const initialData = currentRoute.component.fetchData()
+  const fetchData = currentRoute.component.fetchData && currentRoute.component.fetchData();
+  Promise.resolve(fetchData)
     .then((initialData) => {
       const context = {initialData};
       console.log(context);
