@@ -1,25 +1,46 @@
+import path from 'path';
 import Express from 'express';
+import favicon from 'serve-favicon';
 import React from 'react';
 import {renderToString} from 'react-dom/server';
-import {StaticRouter} from 'react-router-dom';
+import {StaticRouter, matchPath} from 'react-router-dom';
+import 'isomorphic-fetch';
 import App from '../common/app';
+import routes from '../common/routes';
 
 const app = new Express();
 const port = process.env.PORT || 9000;
 
+app.use(favicon('favicon.ico'));
 app.use(Express.static('public'));
 
-const handleRender = (req, res) => {
-  const html = renderToString(
-    <StaticRouter location={req.url}>
-      <App />
-    </StaticRouter>
-  );
+app.get('/api/dashboard', (req, res) => {
+  res.json({
+    numberOfResources: 15
+  })
+});
 
-  res.send(renderFullPage(html));
+const handleRender = (req, res) => {
+  console.log(`Request URL is: ${req.url}`);
+  const currentRoute = routes.find((route) => (matchPath(req.url, route)));
+  const initialData = currentRoute.component.fetchData()
+    .then((initialData) => {
+      const context = {initialData};
+      console.log(context);
+      const html = renderToString(
+        <StaticRouter location={req.url} context={context}>
+          <App />
+        </StaticRouter>
+      );
+    
+      res.send(renderFullPage(html, initialData));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
-const renderFullPage = (html) => {
+const renderFullPage = (html, initialData) => {
   return `
   <!doctype html>
   <html>
@@ -29,6 +50,7 @@ const renderFullPage = (html) => {
     <body>
       <div id="app">${html}</div>
       <script src="/app.bundle.js"></script>
+      <script>window.__INITIAL_DATA__ = ${JSON.stringify(initialData)};</script>
     </body>
   </html>
   `
