@@ -1,22 +1,9 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import 'isomorphic-fetch';
 
 class Skills extends Component {
-  constructor(props) {
-    super(props);
-
-    let initialData;
-    if (props.staticContext) {
-      initialData = props.staticContext.initialData;
-    } else {
-      initialData = window.__INITIAL_DATA__;
-      delete window.__INITIAL_DATA__;
-    }
-
-    this.state = {
-      skills: initialData.skills.join(',')
-    };
-  }
-
   static fetchData() {
     return fetch('http://localhost:9000/api/skills')
       .then(res => res.json());
@@ -26,10 +13,17 @@ class Skills extends Component {
     return (
       <div>
         <h1>Skills</h1>
-        <h3>{this.state.skills}</h3>
+        <h3>{this.props.skills}</h3>
       </div>
     );
   }
 }
 
-export default Skills;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    skills: state.skills.join(',')
+  };
+};
+
+export default withRouter(connect(mapStateToProps)(Skills));
+

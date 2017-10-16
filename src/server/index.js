@@ -1,53 +1,50 @@
 import path from 'path';
 import Express from 'express';
 import favicon from 'serve-favicon';
+import logger from 'morgan';
 import React from 'react';
+import {Provider} from 'react-redux';
 import {renderToString} from 'react-dom/server';
 import {StaticRouter, matchPath} from 'react-router-dom';
 import 'isomorphic-fetch';
+import api from './api';
+import configureStore from '../common/store/configure-store';
 import App from '../common/app';
 import routes from '../common/routes';
 
 const app = new Express();
 const port = process.env.PORT || 9000;
 
+app.use(logger('tiny'));
 app.use(favicon('favicon.ico'));
 app.use(Express.static('public'));
-
-app.get('/api/dashboard', (req, res) => {
-  res.json({
-    numberOfResources: 15
-  })
-});
-
-app.get('/api/skills', (req, res) => {
-  res.json({
-    skills: ['Oracle PLSQL', 'JavaScript']
-  });
-});
+app.use('/api', api);
 
 const handleRender = (req, res) => {
-  console.log(`Request URL is: ${req.url}`);
   const currentRoute = routes.find((route) => (matchPath(req.url, route)));
   const fetchData = currentRoute.component.fetchData && currentRoute.component.fetchData();
+  
   Promise.resolve(fetchData)
-    .then((initialData) => {
-      const context = {initialData};
-      console.log(context);
+    .then((preloadedState) => {
+      const store = configureStore(preloadedState);
+      const context = {};
+
       const html = renderToString(
-        <StaticRouter location={req.url} context={context}>
-          <App />
-        </StaticRouter>
+        <Provider store={store}>
+          <StaticRouter location={req.url} context={context}>
+            <App />
+          </StaticRouter>
+        </Provider>
       );
     
-      res.send(renderFullPage(html, initialData));
+      res.send(renderFullPage(html, preloadedState));
     })
     .catch((error) => {
       console.log(error);
     });
 };
 
-const renderFullPage = (html, initialData) => {
+const renderFullPage = (html, preloadedState) => {
   return `
   <!doctype html>
   <html>
@@ -56,7 +53,7 @@ const renderFullPage = (html, initialData) => {
     </head>
     <body>
       <div id="app">${html}</div>
-      <script>window.__INITIAL_DATA__ = ${JSON.stringify(initialData)};</script>
+      <script>window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedState)};</script>
       <script src="/app.bundle.js"></script>
     </body>
   </html>
