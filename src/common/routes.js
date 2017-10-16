@@ -1,5 +1,5 @@
-import Dashboard from './dashboard/dashboard';
-import Skills from './skills/skills';
+import Dashboard from './containers/dashboard';
+import Skills from './containers/skills';
 
 const routes = [
   {
