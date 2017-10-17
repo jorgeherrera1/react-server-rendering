@@ -6,7 +6,7 @@ import React from 'react';
 import {Provider} from 'react-redux';
 import {renderToString} from 'react-dom/server';
 import {StaticRouter, matchPath} from 'react-router-dom';
-import 'isomorphic-fetch';
+import fetch from 'isomorphic-fetch';
 import api from './api';
 import configureStore from '../common/store/configure-store';
 import App from '../common/app';
@@ -15,7 +15,7 @@ import routes from '../common/routes';
 const app = new Express();
 const port = process.env.PORT || 9000;
 
-app.use(logger('tiny'));
+app.use(logger('short'));
 app.use(favicon('favicon.ico'));
 app.use(Express.static('public'));
 app.use('/api', api);
@@ -25,8 +25,8 @@ const handleRender = (req, res) => {
   const fetchData = currentRoute.component.fetchData && currentRoute.component.fetchData();
   
   Promise.resolve(fetchData)
-    .then((preloadedState) => {
-      const store = configureStore(preloadedState);
+    .then((initialData) => {
+      const store = configureStore(initialData);
       const context = {};
 
       const html = renderToString(
@@ -36,6 +36,9 @@ const handleRender = (req, res) => {
           </StaticRouter>
         </Provider>
       );
+
+      const preloadedState = store.getState();
+      console.log('Preloaded State from Server: ', preloadedState);
     
       res.send(renderFullPage(html, preloadedState));
     })

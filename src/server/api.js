@@ -12,7 +12,9 @@ api.get('/dashboard', (req, res) => {
 
 api.get('/skills', (req, res) => {
   res.json({
-    skills: ['Oracle PLSQL', 'JavaScript']
+    skills: {
+      data: ['Oracle PLSQL', 'JavaScript']
+    }
   });
 });
 

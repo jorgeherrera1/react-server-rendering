@@ -16,3 +16,5 @@ hydrate(
   </Provider>,
   document.getElementById('app')
 );
+
+delete window.__PRELOADED_STATE__;

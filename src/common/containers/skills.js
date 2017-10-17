@@ -1,12 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
-import 'isomorphic-fetch';
+import fetch from 'isomorphic-fetch';
+import {fetchSkills} from '../actions';
 
 class Skills extends Component {
   static fetchData() {
     return fetch('http://localhost:9000/api/skills')
       .then(res => res.json());
+  }
+
+  componentWillMount() {
+    if (!this.props.skills) {
+      this.props.fetchSkills();
+    }
   }
 
   render() {
@@ -21,9 +28,8 @@ class Skills extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    skills: state.skills.join(',')
+    skills: state.skills.data.join(',')
   };
 };
 
-export default withRouter(connect(mapStateToProps)(Skills));
-
+export default withRouter(connect(mapStateToProps, {fetchSkills})(Skills));
